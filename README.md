@@ -1,7 +1,6 @@
 # matrixmults
 ## Packages
-- Creates and Populates input matrices from input files
-- of the form
+- Creates and Populates input matrices from input files of the form
 ```text
 (x) rows (y)cols
 Nx1y1 Nx1y2 ... Nx1y
@@ -32,3 +31,22 @@ Sending job id x type (1 or 2) size Y (rc=0)
 Receiving job id x type (1 or 2) size Y
 ```
 
+
+## Compiling
+- `make all` will compile the package optimized for speed and no debug messages
+- `make debug` will compile the package with debug variables to be able run gdb
+   etc
+- `make clean` will remove current builds
+
+## Running
+- all arguments are position based
+### Package
+```bash
+./package <matrix 1 file> <matrix 2 file> <output matrix data file> <secs
+between thread creation>
+```
+
+### Compute
+```bash
+./compute <thread pool size> <-n just read and output calculations>
+```
