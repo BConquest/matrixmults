@@ -33,10 +33,11 @@ Receiving job id x type (1 or 2) size Y
 
 
 ## Compiling
-- `make all` will compile the package optimized for speed and no debug messages
+- `make build` will compile the package optimized for speed and no debug messages
 - `make debug` will compile the package with debug variables to be able run gdb
    etc
 - `make clean` will remove current builds
+- 'make help' will print out a help message
 
 ## Running
 - all arguments are position based
