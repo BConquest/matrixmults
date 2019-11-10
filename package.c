@@ -12,58 +12,95 @@
 
 #include "./include/error.h"
 
+typedef struct matrix {
+  int inner;
+  int outer;
+  int *pmatrix;
+} matrix;
 
 int *allocateMatrix(int, int);
+matrix *initMatrix(char *);
+
 void printMatrix(int *, int, int);
 
 int main(int argc, char *argv[])
 {
-  FILE *file1, *file2;
 	if(DEBUG) {
 		printf("Debug mode is on.\n");
 	}
   
-  file1 = fopen(argv[1], "r");
-  file2 = fopen(argv[1], "r");
-
-  if (!file1){
-    Ferror("Error opening file 1");
-  } else if (!file2) {
-    Ferror("Error opening file 2");
+  if (argc != 5) {
+    printf("Usage is ./package <matrix 1 filename> <matrix 2 filename>"
+           " <output matrix data file> <secs between thread creation>\n");
+    Ferror("Check Arguments");
   }
 
+  matrix *matrix1 = initMatrix(argv[1]);
+  matrix *matrix2 = initMatrix(argv[2]);
+  
+  free(matrix1->pmatrix);
+  free(matrix2->pmatrix);
+  free(matrix1);
+  free(matrix2);
   return 0;
 }
 
-void printMatrix(int *ptr, int inner, int outer)
+void printMatrix(int *ptr, int rows, int cols)
 {
-  int i, j;
+  int i;
   
-  for (i = 0; i < inner; i++)
-  {
-    for (j = 0; j < outer; j++)
-    {
-      printf("%d ", ptr[i+j]);
-    }
-    printf("\n");
+  for (i = 0; i < rows*cols; i++) {
+      if (i % cols == 0) {
+        printf("\n");
+      } 
+      printf("%d ", ptr[i]);
   }
-
+  printf("\n");
 }
 
-int *allocateMatrix(int inner, int outer)
+int *allocateMatrix(int rows, int cols)
 {
   int* ptr;
   int i;
 
-  ptr = malloc((inner*outer)*sizeof(int));
+  ptr = malloc((rows*cols)*sizeof(int));
   
   if(!ptr) {
-    Ferror("Cannot allocate bomb");
+    Ferror("Cannot allocate space");
   }
 
-  for (i = 0; i < inner*outer; i++) {
-    ptr[i] = i;
+  for (i = 0; i < rows*cols; i++) {
+      ptr[i] = 0;
   }
 
   return ptr;
+}
+
+matrix *initMatrix(char *filename) {
+  FILE *fileptr = fopen(filename, "r");
+  int temp_rows, temp_cols;
+  int *temp_matrix;
+
+  if (!fileptr) {
+    printf("Error opening <%s>", filename);
+    Ferror("Error");
+  }
+
+  fscanf(fileptr, "%d", &temp_rows);
+  fscanf(fileptr, "%d", &temp_cols);
+  if (DEBUG)
+    printf("matrix dimensions r: %d c: %d\n", temp_rows, temp_cols);
+  
+  temp_matrix = allocateMatrix(temp_rows, temp_cols);
+  for (int i = 0; i < temp_rows*temp_cols; i++)
+    fscanf(fileptr, "%d", &temp_matrix[i]);
+  printMatrix(temp_matrix, temp_rows, temp_cols);
+
+  matrix *matrix1 = malloc(sizeof(matrix));
+  matrix1->inner = temp_rows;
+  matrix1->outer = temp_cols;
+  matrix1->pmatrix = temp_matrix;
+
+  fclose(fileptr);
+  return matrix1;
 }

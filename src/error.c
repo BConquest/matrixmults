@@ -2,7 +2,7 @@
 
 void Werror(char *s){
   if(DEBUG)
-    perror(s);
+    printf("%s", s);
 }
 
 void Ferror(char *s){
