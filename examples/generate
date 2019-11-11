@@ -1,0 +1,6 @@
+f = open("matrix3.dat", "w")
+f.write("50 50")
+for x in range(0,2500):
+  f.write(str(x)+" ")
+  if x % 50 == 0:
+    f.write("\n")

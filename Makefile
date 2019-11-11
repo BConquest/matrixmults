@@ -1,6 +1,6 @@
 cc=clang
 libraries=-lpthread
-include=src/error.c
+include=src/error.c src/matrix.c
 debugFlags=-Wall -Wextra -pedantic -DDEBUG=1 -ggdb -Og
 buildFlags=-O3 -DDEBUG=0
 
