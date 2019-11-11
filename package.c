@@ -13,14 +13,14 @@
 #include "./include/error.h"
 
 typedef struct matrix {
-  int inner;
-  int outer;
+  int r;
+  int c;
   int *pmatrix;
 } matrix;
 
 int *allocateMatrix(int, int);
 matrix *initMatrix(char *);
-
+void checkMatrix(matrix *, matrix *);
 void printMatrix(int *, int, int);
 
 int main(int argc, char *argv[])
@@ -38,11 +38,26 @@ int main(int argc, char *argv[])
   matrix *matrix1 = initMatrix(argv[1]);
   matrix *matrix2 = initMatrix(argv[2]);
   
+  checkMatrix(matrix1, matrix2);
+
   free(matrix1->pmatrix);
   free(matrix2->pmatrix);
   free(matrix1);
   free(matrix2);
   return 0;
+}
+
+void checkMatrix(matrix *a, matrix *b)
+{
+  if (a->c != b->r) {
+    Ferror("Matrixs do not correlate");
+  }
+  if (a->r > 50 || a->c > 50) {
+    Ferror("Matrix a is too large");
+  }
+  if (b->r > 50 || b->c > 50) {
+    Ferror("Matrix b is too large");
+  }
 }
 
 void printMatrix(int *ptr, int rows, int cols)
@@ -94,11 +109,13 @@ matrix *initMatrix(char *filename) {
   temp_matrix = allocateMatrix(temp_rows, temp_cols);
   for (int i = 0; i < temp_rows*temp_cols; i++)
     fscanf(fileptr, "%d", &temp_matrix[i]);
-  printMatrix(temp_matrix, temp_rows, temp_cols);
+  
+  if(DEBUG)
+    printMatrix(temp_matrix, temp_rows, temp_cols);
 
   matrix *matrix1 = malloc(sizeof(matrix));
-  matrix1->inner = temp_rows;
-  matrix1->outer = temp_cols;
+  matrix1->r = temp_rows;
+  matrix1->c = temp_cols;
   matrix1->pmatrix = temp_matrix;
 
   fclose(fileptr);
