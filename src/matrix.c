@@ -11,6 +11,8 @@ int *allocateMatrix(int rows, int cols)
     Ferror("Cannot allocate space for matrix");
   }
 
+  // Initiliazes all spaces to 0 in case input matrix does not contain
+  // sufficient values
   for (i = 0; i < rows*cols; i++) {
     ptr[i] = 0;
   }
@@ -55,6 +57,8 @@ matrix *initMatrix(char *filename)
   
   for (i = 0; i < temp_rows*temp_cols; i++)
     fscanf(fileptr, "%d", &temp_matrix[i]);
+  if (i != temp_rows*temp_cols && DEBUG)
+    printf("Input matrix did not contain enough values initiliazed to 0\n");
 
   if (DEBUG)
     printMatrix(temp_matrix, temp_rows, temp_cols);
