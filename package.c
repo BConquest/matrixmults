@@ -45,6 +45,9 @@ int main(int argc, char *argv[])
 	
 	destroyMatrix(matrix1);
 	destroyMatrix(matrix2);
-	while(1) sleep(1);
+	while(1) {
+    sent++;
+    recv--;
+  }
 	return 0;
 }
