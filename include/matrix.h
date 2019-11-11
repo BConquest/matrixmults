@@ -31,6 +31,15 @@ int *allocateMatrix(int, int);
 int *getRow(matrix *, int);
 
 /*
+ * getCol
+ * matrix a
+ * int row
+ * Returns all of the values in the col of the matrix pass in
+ * if passed in an invalid row returns 0
+ */
+int *getCol(matrix *, int);
+
+/*
  * initMatrix
  * char *filename
  * creates a matrix from the passed in filename
@@ -55,5 +64,12 @@ void checkMatrix(matrix *, matrix *);
  * can print a matrix from the passed in 1d array
  */
 void printMatrix(int *, int, int);
+
+/*
+ * destroyMatrix
+ * int *matrix
+ * frees all memory allocated to a matrix data structre
+ */
+void destroyMatrix(matrix *);
 
 #endif

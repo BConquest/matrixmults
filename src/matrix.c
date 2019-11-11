@@ -20,13 +20,35 @@ int *allocateMatrix(int rows, int cols)
   return ptr;
 }
 
+int *getCol(matrix *a, int col)
+{
+  if (a->c <= col) {
+    Ferror("Invalid col");
+  }
+
+  int r = 0;
+  int *newCol = malloc(a->r*sizeof(int));
+
+  if (!newCol) {
+    Ferror("Could not allocate space for new col");
+  }
+
+  for (r = 0; r < a->r; r++) {
+    newCol[r] = a->pmatrix[col+((a->r+1)*r)];
+  }
+  return newCol;
+}
+
 int *getRow(matrix *a, int row)
 {
+  if (a->r <= row) {
+    Ferror("Invalid row");
+  }
   int c = 0;
   int* newRow = malloc(a->c*sizeof(int));
 
   if (!newRow) {
-    Ferror("Could not allocate space");
+    Ferror("Could not allocate space for new row");
   }
 
   for (c = 0; c < a->c; c++) {
@@ -83,6 +105,12 @@ void checkMatrix(matrix *a, matrix *b)
   if (b->r > 50 || b->c > 50) {
     Ferror("Matrix b is too large");
   }
+}
+
+void destroyMatrix(matrix *del)
+{
+  free(del->pmatrix);
+  free(del);
 }
 
 void printMatrix(int *ptr, int rows, int cols)

@@ -30,18 +30,20 @@ int main(int argc, char *argv[])
   
   checkMatrix(matrix1, matrix2);
 
-  int *temp = getRow(matrix1, 1);
+  /*int *temp = getRow(matrix1, 0);
+  int *temp2 = getCol(matrix1, 0);
 
+  for(int i = 0; i < matrix1->r; i++) {
+    printf("%d\n", temp2[i]);
+  }
   for(int i = 0; i < matrix1->c; i++) {
     printf("%d ", temp[i]);
   }
-
   printf("\n");
   
   free(temp);
-  free(matrix1->pmatrix);
-  free(matrix2->pmatrix);
-  free(matrix1);
-  free(matrix2);
+  free(temp2);*/
+  destroyMatrix(matrix1);
+  destroyMatrix(matrix2);
   return 0;
 }
