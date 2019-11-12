@@ -6,8 +6,8 @@
 #ifdef DEBUG
 #endif
 
-#include <signal.h>
 #include <stdio.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
@@ -26,10 +26,14 @@ void sig_handler(int signo) {
 		printf("Jobs Sent %d Jobs Received %d\n", sent, recv);
 }
 
-struct mesg_buffer {
-  long mesg_type;
-  char mesg_text[100];
-} message;
+typedef struct QueueMessage {
+	long type;
+	int jobid;
+	int rowvec;
+	int colvec;
+	int innerDim;
+	int data[100];
+} msg;
 
 int main(int argc, char *argv[])
 {
@@ -42,6 +46,7 @@ int main(int argc, char *argv[])
 	if (argc != 5) {
 		printf("Usage is ./package <matrix 1 filename> <matrix 2 filename>"
 				" <output matrix data file> <secs between thread creation>\n");
+
 		Ferror("Check Arguments");
 	}
 
@@ -49,25 +54,52 @@ int main(int argc, char *argv[])
 	matrix *matrix2 = initMatrix(argv[2]);
 
 	checkMatrix(matrix1, matrix2);
-  printf("1\n");
-  key_t key;
-  int msgid;
-  int id = (int)"bmconquest";
+	printf("1\n");
+	key_t key;
+	int msgid;
+	int id = 65;
 
-  key = ftok("./bmconquest", id);
-  printf("2\n");
-  msgid = msgget(key, 0666 | IPC_CREAT);
-  printf("3\n");
-  message.mesg_type = 1;
+	key = ftok("./bmconquest", id);
 
-  printf("Write Data : ");
-  gets(message.mesg_text);
-  printf("4\n");
-  msgsnd(msgid, &message, sizeof(message), 0);
+	if (DEBUG) {
+		printf("key->%d\n", key);
+		printf("Num Jobs: %d\n", matrix1->r*matrix2->c);
+	}
 
-  if(DEBUG) {
-    printf("key->%d\n",key);
-  }
+	for (int i = 0; i < matrix1->r; i++) {
+		for (int j = 0; j < matrix2->c; j++) {
+			msgid = msgget(key, 0666 | IPC_CREAT);
+			msg a;
+			a.type = 1;
+			a.jobid = sent;
+			sent += 1;
+			a.rowvec = i;
+			a.colvec = j;
+			a.innerDim = matrix1->c;
+			
+			int *row = getRow(matrix1, i);
+			int *col = getCol(matrix2, j);
+
+			for (int k = 0; k < matrix1->c; k++)
+			{
+				a.data[0+k] = row[k];
+				if (DEBUG) {
+					printf("%d ", a.data[0+k]);
+				}
+			}
+			printf("\t");
+
+			for (int l = 0; l < matrix2->r; l++)
+			{
+				a.data[51+l] = col[l];
+				if (DEBUG) {
+					printf("%d ", a.data[51+l]);
+				}
+			}
+			printf("\n");
+			msgsnd(msgid, &a, sizeof(a), 0);
+		}
+	}
 
 	destroyMatrix(matrix1);
 	destroyMatrix(matrix2);
