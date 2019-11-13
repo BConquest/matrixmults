@@ -1,6 +1,5 @@
-f = open("matrix3.dat", "w")
-f.write("50 50")
-for x in range(0,2500):
+f = open("50x49.dat", "w")
+f.write("50 49\n")
+for x in range(0,(50*49)):
   f.write(str(x)+" ")
-  if x % 50 == 0:
-    f.write("\n")
+f.write("\n")
