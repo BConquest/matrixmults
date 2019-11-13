@@ -37,6 +37,8 @@ typedef struct QueueMessage {
 
 int main(int argc, char *argv[])
 {
+  int sleepTime = atoi(argv[4]);
+
 	signal(SIGINT, sig_handler);
 
 	if(DEBUG) {
@@ -54,7 +56,6 @@ int main(int argc, char *argv[])
 	matrix *matrix2 = initMatrix(argv[2]);
 
 	checkMatrix(matrix1, matrix2);
-	printf("1\n");
 	key_t key;
 	int msgid;
 	int id = 65;
@@ -79,9 +80,12 @@ int main(int argc, char *argv[])
 			
 			int *row = getRow(matrix1, i);
 			int *col = getCol(matrix2, j);
+      
+      for (int m = 0; m < 100; m++) {
+        a.data[m] = 0;
+      }
 
-			for (int k = 0; k < 50; k++)
-			{
+			for (int k = 0; k < 50; k++) {
 				if (k < matrix1->c) {
 					a.data[0+k] = row[k];
 				} else {
@@ -93,8 +97,7 @@ int main(int argc, char *argv[])
 			}
 			if (DEBUG) printf("\t");
 
-			for (int l = 0; l < 50; l++)
-			{
+			for (int l = 0; l < 50; l++) {
 				if (l < matrix2->r) {
 					a.data[50+l] = col[l];
 				} else {
@@ -104,11 +107,14 @@ int main(int argc, char *argv[])
 					printf("%d ", a.data[50+l]);
 				}
 			}
-			free(row);
-			free(col);
 			if(DEBUG) printf("\n");
-			msgsnd(msgid, &a, sizeof(a), 0);
-			printf("Sending job id %d type %d size %d (rc=%d)\n", sent, 1, sizeof(a), 0);
+			int rc = msgsnd(msgid, &a, sizeof(a), 0);
+			printf("Sending job id %d type %d size %ld (rc=%d)\n", sent, 1, sizeof(a), rc);
+      
+      sleep(sleepTime);
+
+      free(row);
+      free(col);
 		}
 	}
 
