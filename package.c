@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 					printf("%d ", a.data[0+k]);
 				}
 			}
-			printf("\t");
+			if (DEBUG) printf("\t");
 
 			for (int l = 0; l < 50; l++)
 			{
@@ -106,8 +106,9 @@ int main(int argc, char *argv[])
 			}
 			free(row);
 			free(col);
-			printf("\n");
+			if(DEBUG) printf("\n");
 			msgsnd(msgid, &a, sizeof(a), 0);
+			printf("Sending job id %d type %d size %d (rc=%d)\n", sent, 1, sizeof(a), 0);
 		}
 	}
 
