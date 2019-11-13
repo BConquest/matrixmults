@@ -80,20 +80,28 @@ int main(int argc, char *argv[])
 			int *row = getRow(matrix1, i);
 			int *col = getCol(matrix2, j);
 
-			for (int k = 0; k < matrix1->c; k++)
+			for (int k = 0; k < 50; k++)
 			{
-				a.data[0+k] = row[k];
-				if (DEBUG) {
+				if (k < matrix1->c) {
+					a.data[0+k] = row[k];
+				} else {
+					a.data[0+k] = 0;
+				}
+				if (DEBUG && k < matrix1->c) {
 					printf("%d ", a.data[0+k]);
 				}
 			}
 			printf("\t");
 
-			for (int l = 0; l < matrix2->r; l++)
+			for (int l = 0; l < 50; l++)
 			{
-				a.data[50+l] = col[l];
-				if (DEBUG) {
-					printf("%d ", a.data[51+l]);
+				if (l < matrix2->r) {
+					a.data[50+l] = col[l];
+				} else {
+					a.data[50+l] = 0;
+				}
+				if (DEBUG && l < matrix2->r) {
+					printf("%d ", a.data[50+l]);
 				}
 			}
 			free(row);
