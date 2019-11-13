@@ -91,11 +91,13 @@ int main(int argc, char *argv[])
 
 			for (int l = 0; l < matrix2->r; l++)
 			{
-				a.data[51+l] = col[l];
+				a.data[50+l] = col[l];
 				if (DEBUG) {
 					printf("%d ", a.data[51+l]);
 				}
 			}
+			free(row);
+			free(col);
 			printf("\n");
 			msgsnd(msgid, &a, sizeof(a), 0);
 		}
