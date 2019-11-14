@@ -1,6 +1,6 @@
 cc=gcc
 libraries=-lpthread
-include=src/error.c src/matrix.c
+include=src/matrix.c
 debugFlags=-Wall -Wextra -pedantic -DDEBUG=1 -ggdb -Og -std=c99
 buildFlags=-O3 -DDEBUG=0 -std=c99
 

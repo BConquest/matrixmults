@@ -2,8 +2,7 @@
 #define __matrix_h__
 
 #include <stdio.h>
-
-#include "./error.h"
+#include <stdlib.h>
 
 typedef struct matrix {
   int r;
