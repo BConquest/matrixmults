@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
 
 	matrix *matrix1 = initMatrix(argv[1]);
 	matrix *matrix2 = initMatrix(argv[2]);
+	printf("%d %d\t%d %d", matrix1->r, matrix1->c, matrix2->r, matrix2->c);
 
 	checkMatrix(matrix1, matrix2);
 	key_t key;
@@ -97,14 +98,14 @@ int main(int argc, char *argv[])
 			}
 			if (DEBUG) printf("\t");
 
-			for (int l = 0; l < 50; l++) {
+			for (int l = 50; l < 99; l++) {
 				if (l < matrix2->r) {
-					a.data[50+l] = col[l];
+					a.data[l] = col[l-50];
 				} else {
-					a.data[50+l] = 0;
+					a.data[l] = 0;
 				}
 				if (DEBUG && l < matrix2->r) {
-					printf("%d ", a.data[50+l]);
+					printf("%d ", a.data[l-50]);
 				}
 			}
 			if(DEBUG) printf("\n");
