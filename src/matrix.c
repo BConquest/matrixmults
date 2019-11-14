@@ -19,11 +19,9 @@ int *getCol(matrix *a, int col)
 	
 	if (!newCol) Ferror("Could not allocate space for new col");
 	
-	printf("%d %d\t", col, a->r);
 
 	for (r = 0; r < a->r; r++) {
-		printf("%d ", col+((a->r+1)*r));
-		newCol[r] = a->pmatrix[col+((a->r+1)*r)];
+		newCol[r] = a->pmatrix[col+(r*(a->r+1))];
 	}
 
 	printf("\n");
