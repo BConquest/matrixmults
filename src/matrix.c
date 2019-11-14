@@ -5,18 +5,12 @@ int *allocateMatrix(int rows, int cols)
 	int *ptr;
 	int i;
 
-	ptr = malloc((rows*cols)*sizeof(int));
+	ptr = calloc((rows*cols),sizeof(int));
 
 	if (!ptr) {
 		Ferror("Cannot allocate space for matrix");
 	}
-
-	// Initiliazes all spaces to 0 in case input matrix does not contain
-	// sufficient values
-	for (i = 0; i < rows*cols; i++) {
-		ptr[i] = 0;
-	}
-
+	
 	return ptr;
 }
 
@@ -27,15 +21,19 @@ int *getCol(matrix *a, int col)
 	}
 
 	int r = 0;
-	int *newCol = malloc(a->r*sizeof(int)+1);
-
+	int *newCol = calloc(a->r,sizeof(int));
+	
 	if (!newCol) {
 		Ferror("Could not allocate space for new col");
 	}
+	
+	printf("%d %d\t", col, a->r);
 
 	for (r = 0; r < a->r; r++) {
+		printf("%d ", col+((a->r+1)*r));
 		newCol[r] = a->pmatrix[col+((a->r+1)*r)];
 	}
+	printf("\n");
 	return newCol;
 }
 
@@ -45,7 +43,7 @@ int *getRow(matrix *a, int row)
 		Ferror("Invalid row");
 	}
 	int c = 0;
-	int* newRow = malloc(a->c*sizeof(int));
+	int* newRow = calloc(a->c,sizeof(int));
 
 	if (!newRow) {
 		Ferror("Could not allocate space for new row");
@@ -60,7 +58,7 @@ int *getRow(matrix *a, int row)
 matrix *initMatrix(char *filename)
 {
 	FILE *fileptr;
-	int temp_rows, temp_cols, i;
+	int temp_rows = 0, temp_cols = 0, i;
 	int *temp_matrix;
 
 	fileptr = fopen(filename, "r");

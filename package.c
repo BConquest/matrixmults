@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 
 	if (DEBUG) {
 		printf("key->%d\n", key);
-		printf("Num Jobs: %d\n", matrix1->r*matrix2->c);
+		printf("Num Jobs: %04d\n", matrix1->r*matrix2->c);
 	}
 
 	for (int i = 0; i < matrix1->r; i++) {
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 			}
 			if(DEBUG) printf("\n");
 			int rc = msgsnd(msgid, &a, sizeof(a), 0);
-			printf("Sending job id %d type %d size %ld (rc=%d)\n", sent, 1, sizeof(a), rc);
+			printf("Sending job id %04d type %d size %ld (rc=%d)\n", sent, 1, sizeof(a), rc);
       
       sleep(sleepTime);
 
