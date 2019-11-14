@@ -15,7 +15,6 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 
-#include "./include/error.h"
 #include "./include/matrix.h"
 
 volatile int sent;
@@ -48,13 +47,11 @@ int main(int argc, char *argv[])
 	if (argc != 5) {
 		printf("Usage is ./package <matrix 1 filename> <matrix 2 filename>"
 				" <output matrix data file> <secs between thread creation>\n");
-
-		Ferror("Check Arguments");
+		exit(1);
 	}
 
 	matrix *matrix1 = initMatrix(argv[1]);
 	matrix *matrix2 = initMatrix(argv[2]);
-	printf("%d %d\t%d %d", matrix1->r, matrix1->c, matrix2->r, matrix2->c);
 
 	checkMatrix(matrix1, matrix2);
 	key_t key;
@@ -87,30 +84,21 @@ int main(int argc, char *argv[])
 			}
 
 			for (int k = 0; k < 50; k++) {
-				if (k < matrix1->c) {
-					a.data[0+k] = row[k];
-				} else {
-					a.data[0+k] = 0;
-				}
-				if (DEBUG && k < matrix1->c) {
+				if (k < matrix1->c) a.data[0+k] = row[k];
+				if (DEBUG && k < matrix1->c) 
 					printf("%d ", a.data[0+k]);
-				}
 			}
 			if (DEBUG) printf("\t");
 
 			for (int l = 50; l < 99; l++) {
-				if (l < matrix2->r) {
-					a.data[l] = col[l-50];
-				} else {
-					a.data[l] = 0;
-				}
-				if (DEBUG && l < matrix2->r) {
+				if (l < matrix2->r) a.data[l] = col[l-50];
+				if (DEBUG && l < matrix2->r)
 					printf("%d ", a.data[l-50]);
-				}
 			}
-			if(DEBUG) printf("\n");
+			if (DEBUG) printf("\n");
 			int rc = msgsnd(msgid, &a, sizeof(a), 0);
-			printf("Sending job id %04d type %d size %ld (rc=%d)\n", sent, 1, sizeof(a), rc);
+			printf("Sending job id %04d type %d size %ld (rc=%d)\n"
+				, sent, 1, sizeof(a), rc);
 
 			sleep(sleepTime);
 
