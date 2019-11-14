@@ -37,7 +37,7 @@ typedef struct QueueMessage {
 
 int main(int argc, char *argv[])
 {
-  int sleepTime = atoi(argv[4]);
+	int sleepTime = atoi(argv[4]);
 
 	signal(SIGINT, sig_handler);
 
@@ -77,13 +77,13 @@ int main(int argc, char *argv[])
 			a.rowvec = i;
 			a.colvec = j;
 			a.innerDim = matrix1->c;
-			
+
 			int *row = getRow(matrix1, i);
 			int *col = getCol(matrix2, j);
-      
-      for (int m = 0; m < 100; m++) {
-        a.data[m] = 0;
-      }
+
+			for (int m = 0; m < 100; m++) {
+				a.data[m] = 0;
+			}
 
 			for (int k = 0; k < 50; k++) {
 				if (k < matrix1->c) {
@@ -110,11 +110,11 @@ int main(int argc, char *argv[])
 			if(DEBUG) printf("\n");
 			int rc = msgsnd(msgid, &a, sizeof(a), 0);
 			printf("Sending job id %04d type %d size %ld (rc=%d)\n", sent, 1, sizeof(a), rc);
-      
-      sleep(sleepTime);
 
-      free(row);
-      free(col);
+			sleep(sleepTime);
+
+			free(row);
+			free(col);
 		}
 	}
 
