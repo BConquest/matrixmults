@@ -66,7 +66,12 @@ int main(int argc, char *argv[])
 	int id = 65;
 	signal(SIGINT, sig_handler);
 
+	if (argc > 3 || argc < 2) {
+		printf("usage is \"compute <thread pool size> <-n for just read and output calculations>\"");
+		exit(1);
+	}
 	
+	int THREAD_POOL_SIZE = atoi(argv[2]);
 
 	key = ftok("./bmconquest", id);
 	printf("key -> %d\n",key);
