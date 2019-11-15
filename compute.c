@@ -67,14 +67,21 @@ int main(int argc, char *argv[])
 	signal(SIGINT, sig_handler);
 
 	if (argc > 3 || argc < 2) {
-		printf("usage is \"compute <thread pool size> <-n for just read and output calculations>\"");
+		printf("usage is \"compute <thread pool size> <-n for just read and output calculations>\"\n");
 		exit(1);
 	}
-	
-	int THREAD_POOL_SIZE = atoi(argv[2]);
+	printf("HERE\n");	
+	int thread_pool_size;
+	thread_pool_size = 10; //atoi(argv[2]);
+	printf("HERE\n");
+	printf("%d\n", thread_pool_size);
+	pthread_t *threads;
+	threads = malloc(thread_pool_size*sizeof(pthread_t));
 
 	key = ftok("./bmconquest", id);
 	printf("key -> %d\n",key);
+	
+	int threadLimit = 0;
 	while(1) {
 		msgid = msgget(key, 0666 | IPC_CREAT);
 		msg a;
@@ -82,18 +89,36 @@ int main(int argc, char *argv[])
 		sent += 1;
 		printf("type %ld jobid %d rowvec %d colvec %d innerDim %d\n",
 				a.type, a.jobid, a.rowvec, a.colvec, a.innerDim);
+		
 		int *row = malloc(a.innerDim*sizeof(int));
 		int *col = malloc(a.innerDim*sizeof(int));
+		
 		for(int i = 0; i < a.innerDim; i++) {
 			if(DEBUG) printf("%d ", a.data[i]);
 			row[i] = a.data[i];
 		}
+		
 		if (DEBUG) printf("\t");
+		
 		for(int j = 0; j < a.innerDim; j++) {
 			if(DEBUG) printf("%d ", a.data[50+j]);
 			col[j] = a.data[50+j];
 		}
+		
+		argument *data = NULL;
+		
+		data = malloc(sizeof(data));
+		
+		if (!data) {
+			perror("Not enough memory for data allocation");
+			exit(1);
+		}
+		
+		printf("%d\n", threadLimit);
+		pthread_create(&threads[threadLimit++], NULL, multiply, (void *)data);
+		
 		int dProduct = dotProduct(row, col, a.innerDim);
+		
 		if (DEBUG) printf("=%d\n", dProduct);
 	}
 
