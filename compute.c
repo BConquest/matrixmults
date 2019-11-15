@@ -28,65 +28,28 @@ void sig_handler(int signo)
 	}
 }
 
-typedef struct {
-	int *row;
-	int *col;
-	int mult;
-} argument;
-
-void *multiply(void *arg)
-{
-	argument *a = (argument *)arg;
-	int* r = a->row;
-	int* c = a->col;
-	int mult = a->mult;
-
-	int *product = malloc(sizeof(int));
-	
-	if (!product) {
-		perror("Not enough memory for dot product allocations\n");
-		exit(1);
-	}
-
-	int index = 1;
-
-	for (index = 1; index <= mult; index++) {
-		product += r[index-1] * c[index-1];
-	}
-
-	if (DEBUG) printf("DOT PRODUCT: %d", *product);
-	pthread_exit(product);
-}
-	
-
 int main(int argc, char *argv[])
 {
 	key_t key;
 	int msgid;
 	int id = 65;
-	signal(SIGINT, sig_handler);
-
+		
+	//signal(SIGINT, sig_handler);
+	
 	if (argc > 3 || argc < 2) {
 		printf("usage is \"compute <thread pool size> <-n for just read and output calculations>\"\n");
 		exit(1);
 	}
-	printf("HERE\n");	
-	int thread_pool_size;
-	thread_pool_size = 10; //atoi(argv[2]);
-	printf("HERE\n");
-	printf("%d\n", thread_pool_size);
-	pthread_t *threads;
-	threads = malloc(thread_pool_size*sizeof(pthread_t));
 
 	key = ftok("./bmconquest", id);
 	printf("key -> %d\n",key);
-	
-	int threadLimit = 0;
+
+	int threadLimit = atoi(argv[1]);;
+	int limit = 0;
 	while(1) {
 		msgid = msgget(key, 0666 | IPC_CREAT);
 		msg a;
 		msgrcv(msgid, &a, sizeof(a), 1, 0);
-		sent += 1;
 		printf("type %ld jobid %d rowvec %d colvec %d innerDim %d\n",
 				a.type, a.jobid, a.rowvec, a.colvec, a.innerDim);
 		
@@ -101,27 +64,18 @@ int main(int argc, char *argv[])
 		if (DEBUG) printf("\t");
 		
 		for(int j = 0; j < a.innerDim; j++) {
-			if(DEBUG) printf("%d ", a.data[50+j]);
-			col[j] = a.data[50+j];
+			if(DEBUG) printf("%d ", a.data[a.innerDim+j]);
+			col[j] = a.data[a.innerDim+j];
 		}
 		
-		argument *data = NULL;
-		
-		data = malloc(sizeof(data));
-		
-		if (!data) {
-			perror("Not enough memory for data allocation");
-			exit(1);
-		}
-		
-		printf("%d\n", threadLimit);
-		pthread_create(&threads[threadLimit++], NULL, multiply, (void *)data);
-		
-		int dProduct = dotProduct(row, col, a.innerDim);
-		
-		if (DEBUG) printf("=%d\n", dProduct);
-	}
+		int p = dotProduct(row, col, a.innerDim);
+		free(row);
+		free(col);
+		if (DEBUG) printf("R: %d * C: %d = %d", a.rowvec, a.colvec, p);
 
+		limit += 1;
+	}
+	printf("SAh");
 	msgctl(msgid, IPC_RMID, NULL);
 	return 0;
 }

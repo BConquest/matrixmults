@@ -67,8 +67,11 @@ int main(int argc, char *argv[])
 		printf("Num Jobs: %04d\n", matrix1->r*matrix2->c);
 	}
 
+	/*
 	for (int i = 0; i < matrix1->r; i++) {
 		for (int j = 0; j < matrix2->c; j++) {
+			sleep(sleepTime);
+
 			msgid = msgget(key, 0666 | IPC_CREAT);
 			msg a;
 			a.type = 1;
@@ -81,34 +84,28 @@ int main(int argc, char *argv[])
 			int *row = getRow(matrix1, i);
 			int *col = getCol(matrix2, j);
 
-			for (int m = 0; m < 100; m++) {
-				a.data[m] = 0;
-			}
-
-			for (int k = 0; k < 50; k++) {
-				if (k < matrix1->c) a.data[0+k] = row[k];
+			for (int k = 0; k < a.innerDim; k++) {
+				if (k < matrix1->c) a.data[k] = row[k];
 				if (DEBUG && k < matrix1->c) 
-					printf("%d ", a.data[0+k]);
+					printf("%d ", a.data[k]);
 			}
 			if (DEBUG) printf("\t");
 
-			for (int l = 0; l < 50; l++) {
-				if (l < matrix2->r) a.data[l+50] = col[l];
+			for (int l = 0; l < a.innerDim; l++) {
+				if (l < matrix2->r) a.data[l+a.innerDim] = col[l];
 				if (DEBUG && l < matrix2->r)
-					printf("%d ", a.data[l+50]);
+					printf("%d ", a.data[l+a.innerDim]);
 			}
 			if (DEBUG) printf("\n");
 			int rc = msgsnd(msgid, &a, sizeof(a), 0);
 			printf("Sending job id %04d type %d size %ld (rc=%d)\n"
 				, sent, 1, sizeof(a), rc);
 
-			sleep(sleepTime);
-
 			free(row);
 			free(col);
 		}
 	}
-
+	*/
 	destroyMatrix(matrix1);
 	destroyMatrix(matrix2);
 	return 0;
