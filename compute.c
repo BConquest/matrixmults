@@ -28,12 +28,45 @@ void sig_handler(int signo)
 	}
 }
 
-int main(void)
+typedef struct {
+	int *row;
+	int *col;
+	int mult;
+} argument;
+
+void *multiply(void *arg)
+{
+	argument *a = (argument *)arg;
+	int* r = a->row;
+	int* c = a->col;
+	int mult = a->mult;
+
+	int *product = malloc(sizeof(int));
+	
+	if (!product) {
+		perror("Not enough memory for dot product allocations\n");
+		exit(1);
+	}
+
+	int index = 1;
+
+	for (index = 1; index <= mult; index++) {
+		product += r[index-1] * c[index-1];
+	}
+
+	if (DEBUG) printf("DOT PRODUCT: %d", *product);
+	pthread_exit(product);
+}
+	
+
+int main(int argc, char *argv[])
 {
 	key_t key;
 	int msgid;
 	int id = 65;
 	signal(SIGINT, sig_handler);
+
+	
 
 	key = ftok("./bmconquest", id);
 	printf("key -> %d\n",key);
