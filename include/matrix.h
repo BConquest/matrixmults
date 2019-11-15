@@ -11,6 +11,15 @@ typedef struct matrix {
 } matrix;
 
 /*
+ * dotProduct
+ * int *row
+ * int *col
+ * int multi
+ * Returns the dot products of row and col
+ */
+int dotProduct(int *, int *, int);
+
+/*
  * allocateMatrix
  * int Row
  * int Col

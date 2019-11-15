@@ -20,9 +20,11 @@
 volatile int sent;
 volatile int recv;
 
-void sig_handler(int signo) {
-	if (signo == SIGINT)
+void sig_handler(int signo)
+{
+	if (signo == SIGINT) {
 		printf("Jobs Sent %d Jobs Received %d\n", sent, recv);
+	}
 }
 
 typedef struct QueueMessage {
@@ -90,10 +92,10 @@ int main(int argc, char *argv[])
 			}
 			if (DEBUG) printf("\t");
 
-			for (int l = 50; l < 99; l++) {
-				if (l < matrix2->r) a.data[l] = col[l-50];
+			for (int l = 0; l < 50; l++) {
+				if (l < matrix2->r) a.data[l+50] = col[l];
 				if (DEBUG && l < matrix2->r)
-					printf("%d ", a.data[l-50]);
+					printf("%d ", a.data[l+50]);
 			}
 			if (DEBUG) printf("\n");
 			int rc = msgsnd(msgid, &a, sizeof(a), 0);

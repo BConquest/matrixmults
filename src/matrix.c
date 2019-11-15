@@ -1,5 +1,16 @@
 #include "../include/matrix.h"
 
+int dotProduct(int *row, int *col, int mult)
+{
+	int product = 0, index = 1;
+
+	for (index = 1; index <= mult; index++) {
+		product += row[index-1] * col[index-1];
+	}
+	printf("\t%d\t", product);
+	return product;
+}
+
 int *allocateMatrix(int rows, int cols)
 {
 	int *ptr;
