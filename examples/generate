@@ -1,5 +1,5 @@
-f = open("50x49.dat", "w")
-f.write("50 49\n")
-for x in range(0,(50*49)):
+f = open("1x50.dat", "w")
+f.write("1 50\n")
+for x in range(0,(50*1)):
   f.write(str(x)+" ")
 f.write("\n")
