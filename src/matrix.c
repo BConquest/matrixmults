@@ -32,13 +32,15 @@ int *getCol(matrix *a, int col)
 
 	int r = 0;
 	int *newCol = calloc(a->r,sizeof(int));
-
 	if (!newCol) {
 		perror("Not enough space for column allocation\n");
 		exit(1);
 	}
 
-	for (r = 0; r < a->r; r++) newCol[r] = a->pmatrix[col+(r*(a->r+1))];
+	for (r = 0; r < a->r; r++) {
+//		printf("\n\t\t\t%d\n", a->pmatrix[col+(r*(a->r)+1)]);
+		newCol[r] = a->pmatrix[col+(r*(a->r+1))];
+	}
 
 	return newCol;
 }

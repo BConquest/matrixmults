@@ -17,8 +17,9 @@
 
 #include "./include/matrix.h"
 
-volatile int sent = 0;
-volatile int recv = 0;
+int msgid = 0;
+int sent = 0;
+int recv = 0;
 pthread_mutex_t sentLock;
 
 typedef struct QueueMessage {
@@ -33,7 +34,6 @@ typedef struct QueueMessage {
 typedef struct packageArgument {
 	matrix *a;
 	matrix *b;
-	key_t key;
 	int row;
 	int col;
 } packageArgument;
@@ -43,8 +43,6 @@ void *packager(void *packArg)
 	matrix *c = ((packageArgument *)packArg)->a;
 	matrix *d = ((packageArgument *)packArg)->b;
 
-	key_t pkey = ((packageArgument *)packArg)->key;
-	int msgid = msgget(pkey, 0666 | IPC_CREAT);
 	msg a;
 
 	a.type = 1;
@@ -57,37 +55,38 @@ void *packager(void *packArg)
 
 	int *row = getRow(c, a.rowvec);
 	int *col = getCol(d, a.colvec);
+	int counter = 0;
 
 	for (int k = 0; k < a.innerDim; k++) {
 		if (k < c->c) a.data[k] = row[k];
 		if (DEBUG && k < c->c) 
-			printf("%d ", a.data[k]);
+			printf("(%d) ", a.data[k]);
+		counter++;
 	}
 	if (DEBUG) printf("\t");
 
 	for (int l = 0; l < a.innerDim; l++) {
-		if (l < d->r) a.data[l+a.innerDim] = col[l];
+		if (l < d->r) a.data[l+counter] = col[l];
 		if (DEBUG && l < d->r)
-			printf("%d ", a.data[l+a.innerDim]);
+			printf("(%d)%d ", l+counter,a.data[l+counter]);
 	}
 	if (DEBUG) printf("\n");
 	
-	int rc = msgsnd(msgid, &a, sizeof(a), 0);
+	int rc = msgsnd(msgid, &a, sizeof(a), IPC_NOWAIT);
 	printf("Sending job id %04d type %d size %ld (rc=%d)\n"
 			, a.jobid, 1, sizeof(a), rc);
 
 	free(row);
 	free(col);
-	return NULL;
+	pthread_exit(NULL);
 }
 
-void sig_handler(int signo)
+void sig_handler()
 {
-	if (signo == SIGINT) {
-		pthread_mutex_lock(&sentLock);
-		printf("Jobs Sent %d Jobs Received %d\n", sent, recv);
-		pthread_mutex_unlock(&sentLock);
-	}
+	pthread_mutex_lock(&sentLock);
+	printf("Jobs Sent %d Jobs Received %d\n", sent, recv);
+	pthread_mutex_unlock(&sentLock);
+	fflush(stdout);
 }
 
 
@@ -116,6 +115,8 @@ int main(int argc, char *argv[])
 	int id = 65;
 
 	key = ftok("./bmconquest", id);
+	
+	msgid = msgget(key, 0666 | IPC_CREAT);
 
 	if (DEBUG) {
 		printf("key->%d\n", key);
@@ -131,7 +132,6 @@ int main(int argc, char *argv[])
 			packageArgument threadArgument;
 			threadArgument.a = matrix1;
 			threadArgument.b = matrix2;
-			threadArgument.key = key;
 			threadArgument.row = i;
 			threadArgument.col = j;
 			pthread_create(&threads[threadCounter++], NULL, packager, (void *)&threadArgument);
