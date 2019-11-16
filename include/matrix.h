@@ -4,11 +4,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct matrix {
-  int r;
-  int c;
-  int *pmatrix;
-} matrix;
+/*
+ * rows & cols are indexed 0
+ * pmatrix is a 2d-allocated array
+ */
+typedef struct matrixStruct {
+  int rows;
+  int cols;
+  int **pmatrix;
+} matrixStruct;
 
 /*
  * dotProduct
@@ -27,25 +31,25 @@ int dotProduct(int *, int *, int);
  * array
  * If failing to allocate space program exits
  */
-int *allocateMatrix(int, int);
+int **allocateMatrix(int, int);
 
 /*
  * getRow
  * matrix *a
  * int row
  * Returns all of the values in the Row of the matrix passed in
- * if passed in an invalid row returns 0
+ * if passed in an invalid row program exits
  */
-int *getRow(matrix *, int);
+//int *getRow(matrix *, int);
 
 /*
  * getCol
  * matrix a
  * int row
  * Returns all of the values in the col of the matrix pass in
- * if passed in an invalid row returns 0
+ * if fails exits the programs
  */
-int *getCol(matrix *, int);
+//int *getCol(matrix *, int);
 
 /*
  * initMatrix
@@ -53,7 +57,7 @@ int *getCol(matrix *, int);
  * creates a matrix from the passed in filename
  * if failed to open file program exits
  */
-matrix *initMatrix(char *);
+matrixStruct *initMatrix(char *);
 
 /*
  * checkMatrix
@@ -62,22 +66,20 @@ matrix *initMatrix(char *);
  * checks to make sure that both matrix a and b are within the size
  * requirements and can be added to each other
  */
-void checkMatrix(matrix *, matrix *);
+//void checkMatrix(matrix *, matrix *);
 
 /*
  * printMatrix
- * int *array
- * int row
- * int col
- * can print a matrix from the passed in 1d array
+ * int *matrix
+ * can print a matrix from the passed in array
  */
-void printMatrix(int *, int, int);
+void printMatrix(matrixStruct *);
 
 /*
  * destroyMatrix
  * int *matrix
  * frees all memory allocated to a matrix data structre
  */
-void destroyMatrix(matrix *);
+void destroyMatrix(matrixStruct *);
 
 #endif

@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 	key = ftok("./bmconquest", id);
 	printf("key -> %d\n",key);
 
-	int threadLimit = atoi(argv[1]);;
+//	int threadLimit = atoi(argv[1]);;
 	int limit = 0;
 	while(1) {
 		msgid = msgget(key, 0666 | IPC_CREAT);
