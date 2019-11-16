@@ -15,19 +15,20 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  matrixStruct *a;
-  matrixStruct *b;
-
+  matrixStruct *a, *b;
   a = initMatrix(argv[1]);
   b = initMatrix(argv[2]);
-
+  
+  checkMatrix(a, b);
+  
   if (DEBUG) {
-    printf("(R: %2d\tC:%2d)X(R: %2d\tC:%2d)\n",
-           a->rows, a->cols, b->rows, b->cols);
-    printf("\nMatrix 1\n");
-    printMatrix(a);
-    printf("\nMatrix 2\n");
+    printf("Matrix A: %d X %d\n", a->rows, a->cols);
+	  printMatrix(a);
+    printf("Matrix B: %d X %d\n", b->rows, b->cols);
     printMatrix(b);
   }
+
+  destroyMatrix(a);  
+  destroyMatrix(b);
   return 0;
 }

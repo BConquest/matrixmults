@@ -11,11 +11,35 @@ int dotProduct(int *row, int *col, int mult)
 	return product;
 }
 
+int *getCol(matrixStruct* matrix, int col)
+{
+  int i;
+  
+  int *returnCol = malloc(matrix->rows * sizeof(int));
+
+  for (i = 0; i < matrix->rows; i++)
+    returnCol[i] = matrix->pmatrix[i][col];
+
+  return returnCol;
+}
+
+int *getRow(matrixStruct* matrix, int row)
+{
+  int i;
+
+  int *returnRow = malloc(matrix->cols * sizeof(int));
+
+  for (i = 0; i < matrix->cols; i++)
+    returnRow[i] = matrix->pmatrix[row][i];
+  
+  return returnRow;
+}
+
 int **allocateMatrix(int rows, int cols)
 {
   int i;
 
-  int **arr = (int **)malloc(rows * sizeof(int *));
+  int **arr = malloc(rows * sizeof(int *));
   
   if (!arr) {
     perror("Error Allocating Space for matrix");
@@ -23,7 +47,7 @@ int **allocateMatrix(int rows, int cols)
   }
 
   for (i = 0; i < rows; i++) {
-    arr[i] = (int *) malloc(cols * sizeof(int));
+    arr[i] = malloc(cols * sizeof(int));
     if (!arr[i]) {
       perror("Error Allocating Sub-Space for matrix");
       exit(1);
@@ -32,15 +56,7 @@ int **allocateMatrix(int rows, int cols)
 
   return arr;
 }
-/*
-int *getCol(matrix *a, int col)
-{
-}
 
-int *getRow(matrix *a, int row)
-{
-}
-*/
 matrixStruct *initMatrix(char *filename)
 {
   FILE *fileptr;
@@ -70,21 +86,33 @@ matrixStruct *initMatrix(char *filename)
       fscanf(fileptr, "%d", &matrix[i][j]);
     }
   }
-  matrixStruct *matrix_a = malloc(sizeof(matrixStruct *));
+  matrixStruct *matrix_a = malloc(sizeof(matrixStruct));
   matrix_a->rows = rows;
   matrix_a->cols = cols;
   matrix_a->pmatrix = matrix;
+  fclose(fileptr);
   return matrix_a;
 }
-/*
-void checkMatrix(matrix *a, matrix *b)
+
+void checkMatrix(matrixStruct *a, matrixStruct *b)
 {
+	if (a->cols != b->rows) {
+		printf("ERROR: Matrix's cannot be multiplied together\n");
+		exit(1);
+	}
 }
 
-void destroyMatrix(matrix *del)
+void destroyMatrix(matrixStruct *del)
 {
+	int i;
+
+	for (i = 0; i < del->rows; i++) {
+		free(del->pmatrix[i]);
+	}
+	free(del->pmatrix);
+	free(del);
 }
-*/
+
 void printMatrix(matrixStruct *print)
 {
   int i, j;

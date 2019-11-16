@@ -40,7 +40,7 @@ int **allocateMatrix(int, int);
  * Returns all of the values in the Row of the matrix passed in
  * if passed in an invalid row program exits
  */
-//int *getRow(matrix *, int);
+int *getRow(matrixStruct *, int);
 
 /*
  * getCol
@@ -49,7 +49,7 @@ int **allocateMatrix(int, int);
  * Returns all of the values in the col of the matrix pass in
  * if fails exits the programs
  */
-//int *getCol(matrix *, int);
+int *getCol(matrixStruct *, int);
 
 /*
  * initMatrix
@@ -66,7 +66,7 @@ matrixStruct *initMatrix(char *);
  * checks to make sure that both matrix a and b are within the size
  * requirements and can be added to each other
  */
-//void checkMatrix(matrix *, matrix *);
+void checkMatrix(matrixStruct *, matrixStruct *);
 
 /*
  * printMatrix
