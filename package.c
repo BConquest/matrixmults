@@ -49,11 +49,15 @@ void sig_handler(int signo)
 
 void *package(void *args)
 {
+  int i = 0;
+  int size, rc;
+
   packageArgsStruct *tempArgs = (packageArgsStruct *)args;
   
   matrixStruct *c = tempArgs->a;
   matrixStruct *d = tempArgs->b;
 
+  msg read;
   msg *write = malloc(sizeof(msg));
 
   write->type = 1;
@@ -65,16 +69,16 @@ void *package(void *args)
   int *row = getRow(c, tempArgs->row);
   int *col = getCol(d, tempArgs->col);
    
-  for (int i = 0; i < c->cols; i++) {
+  for (i = 0; i < c->cols; i++) {
     write->data[i] = row[i];
     write->data[c->cols+i] = col[i];
     if (DEBUG) printf("(%dx%d)\t",row[i],col[i]);
   }
   if (DEBUG) printf("\n");
   
-  int size = (4 * sizeof(int)) + (2 * c->cols * sizeof(int));
+  size = (4 * sizeof(int)) + (2 * c->cols * sizeof(int));
   pthread_mutex_lock(&wLock);
-  int rc = msgsnd(msgid, write, size, 0);
+  rc = msgsnd(msgid, write, size, 0);
   pthread_mutex_unlock(&wLock);
 
   if (rc < 0) {
@@ -85,7 +89,6 @@ void *package(void *args)
   printf("Sending job id %4d type %ld size %d (rc=%d)\n",
          write->jobid, write->type, size, rc);
 
-  msg read;
   rc = msgrcv(msgid, &read, sizeof(msg), 2, 0);
   if (rc < 0) {
     perror("Error in message recieve");
@@ -98,13 +101,16 @@ void *package(void *args)
 
   printf("Receiving Job id %d type %ld size %ld\n"
          , read.jobid, read.type, sizeof(read));
+
   pthread_mutex_lock(&outLock);
   tempArgs->out[write->rowvec][write->colvec] = read.innerDim;
   pthread_mutex_unlock(&outLock);
+
   free(write);
   free(row);
   free(col);
   free(tempArgs);
+
   pthread_exit(0);
 }
 
@@ -113,6 +119,7 @@ int main(int argc, char **argv)
   matrixStruct *a, *b;
   int thread = 0, sleepTime;
   int i, j;
+  int **outputMatrix;
   key_t key;
   pthread_t *threads;
 
@@ -143,7 +150,7 @@ int main(int argc, char **argv)
 
   threads = malloc(a->rows*b->cols*sizeof(pthread_t));
 
-  int **outputMatrix = allocateMatrix(a->rows,b->cols);
+  outputMatrix = allocateMatrix(a->rows,b->cols);
 
   if (!threads) {
     perror("Error Allocating Space for threads");
