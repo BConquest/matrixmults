@@ -1,8 +1,8 @@
-cc=clang
+cc=gcc
 libraries=-lpthread
 include=src/matrix.c
-debugFlags=-Wall -Wextra -pedantic -DDEBUG=1 -ggdb -Og
-buildFlags=-O3 -DDEBUG=0
+debugFlags=-Wall -Wextra -pedantic -DDEBUG=1 -ggdb -Og -std=gnu99
+buildFlags=-O3 -DDEBUG=0 -std=gnu99
 
 help:
 	$(info Options are)

@@ -104,7 +104,7 @@ void *package(void *args)
   pthread_mutex_unlock(&srLock);
 
   size = (4 * sizeof(int));
-  printf("Receiving Job id %d type %ld size %ld\n"
+  printf("Receiving Job id %d type %ld size %d\n"
          , read.jobid, read.type, size);
  // if (DEBUG) {
     printf("\n\t\t\t\t\t\t%d\n", read.innerDim);

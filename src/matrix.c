@@ -7,7 +7,6 @@ int dotProduct(int *row, int *col, int mult)
   for (index = 1; index <= mult; index++) {
     product += row[index-1] * col[index-1];
   }
-  printf("\t%d\t", product);
   return product;
 }
 
