@@ -37,14 +37,15 @@ int main(int argc, char *argv[])
 	//signal(SIGINT, sig_handler);
 	
 	if (argc > 3 || argc < 2) {
-		printf("usage is \"compute <thread pool size> <-n for just read and output calculations>\"\n");
+		printf("usage is \"compute <thread pool size> <-n for just read and output"
+           "calculations>\"\n");
 		exit(1);
 	}
 
 	key = ftok("./bmconquest", id);
 	printf("key -> %d\n",key);
 
-//	int threadLimit = atoi(argv[1]);;
+  int threadLimit = atoi(argv[1]); printf("%d\n", threadLimit);
 	int limit = 0;
 	while(1) {
 		msgid = msgget(key, 0666 | IPC_CREAT);
@@ -67,12 +68,22 @@ int main(int argc, char *argv[])
 			if(DEBUG) printf("%d ", a.data[a.innerDim+j]);
 			col[j] = a.data[a.innerDim+j];
 		}
-		
+    		
 		int p = dotProduct(row, col, a.innerDim);
+    if (DEBUG) printf("R: %d * C: %d = %d ", a.rowvec, a.colvec, p);
 		free(row);
 		free(col);
-		if (DEBUG) printf("R: %d * C: %d = %d", a.rowvec, a.colvec, p);
-
+    msg *write = malloc(sizeof(msg));
+    write->type = 2;
+    write->jobid = sent++;
+    write->rowvec = a.rowvec;
+    write->colvec = a.colvec;
+    write->innerDim = p;
+    int size = (4 * sizeof(int));
+    int rc = msgsnd(msgid, write, size, 0);
+    printf("\nSending job %4d type %ld size %d (rc=%d)\n",
+        write->jobid, write->type, size, rc);
+    free(write);
 		limit += 1;
 	}
 	printf("SAh");

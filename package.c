@@ -19,6 +19,7 @@ int recvJobs = 0;
 
 pthread_mutex_t srLock;
 pthread_mutex_t wLock;
+pthread_mutex_t outLock;
 
 typedef struct QueueMessage{
   long type;
@@ -32,6 +33,7 @@ typedef struct QueueMessage{
 typedef struct packageArgsStruct {
   matrixStruct *a;
   matrixStruct *b;
+  int **out;
   int row;
   int col;
   int id;
@@ -83,6 +85,22 @@ void *package(void *args)
   printf("Sending job id %4d type %ld size %d (rc=%d)\n",
          write->jobid, write->type, size, rc);
 
+  msg read;
+  rc = msgrcv(msgid, &read, sizeof(msg), 2, 0);
+  if (rc < 0) {
+    perror("Error in message recieve");
+    exit(1);
+  }
+
+  pthread_mutex_lock(&srLock);
+  recvJobs++;
+  pthread_mutex_unlock(&srLock);
+
+  printf("Receiving Job id %d type %ld size %ld\n"
+         , read.jobid, read.type, sizeof(read));
+  pthread_mutex_lock(&outLock);
+  tempArgs->out[write->rowvec][write->colvec] = read.innerDim;
+  pthread_mutex_unlock(&outLock);
   free(write);
   free(row);
   free(col);
@@ -125,6 +143,8 @@ int main(int argc, char **argv)
 
   threads = malloc(a->rows*b->cols*sizeof(pthread_t));
 
+  int **outputMatrix = allocateMatrix(a->rows,b->cols);
+
   if (!threads) {
     perror("Error Allocating Space for threads");
     exit(1);
@@ -133,19 +153,20 @@ int main(int argc, char **argv)
   for (i = 0; i < a->rows; i++) {
     for (j = 0; j < b->cols; j++) {
       packageArgsStruct *args = malloc(sizeof(packageArgsStruct));
+      sleep(sleepTime);
       if (!args) {
         perror("Error Allocating space for thread arguments");
         exit(1);
       }
       args->a = a;
       args->b = b;
+      args->out = outputMatrix;
       args->row = i;
       args->col = j;
       pthread_mutex_lock(&srLock);
       args->id = sentJobs++;
       pthread_mutex_unlock(&srLock);
       pthread_create(&(threads[thread++]),NULL,package,(void *)args);
-      sleep(sleepTime);
     }
   }
  
@@ -157,6 +178,20 @@ int main(int argc, char **argv)
     printf("Total jobs sent:     %d\n", sentJobs);
     printf("Total jobs recieved: %d\n", recvJobs);
   }
+  
+  for (i = 0; i < a->rows; i++) {
+    for (j = 0; j < b->cols; j++) {
+      printf("%d ", outputMatrix[i][j]);
+    }
+    printf("\n");
+  }
+  
+  writeToFile(argv[3], outputMatrix, a->rows, b->cols); 
+
+  for (i = 0; i < a->rows; i++) {
+    free(outputMatrix[i]);
+  }
+  free(outputMatrix);
 
   free(threads);
   destroyMatrix(a);  

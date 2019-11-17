@@ -82,4 +82,13 @@ void printMatrix(matrixStruct *);
  */
 void destroyMatrix(matrixStruct *);
 
+/*
+ * writeToFile
+ * char * filename
+ * int ** array
+ * int rows
+ * int cols
+ */
+void writeToFile(char *, int **, int, int);
+
 #endif
