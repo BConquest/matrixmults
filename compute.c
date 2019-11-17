@@ -8,6 +8,14 @@
 
 #include "./include/matrix.h"
 
+pthread_mutex_t readLock;
+pthread_mutex_t writeLock;
+pthread_mutex_t srLock;
+
+int sent = 0;
+int recv = 0;
+int msgid = 0;
+
 typedef struct QueueMessage{
 	long type;
 	int jobid;
@@ -17,10 +25,6 @@ typedef struct QueueMessage{
 	int data[100];
 } msg;
 
-
-volatile int sent = 0;
-volatile int recv = 0;
-
 void sig_handler(int signo)
 {
 	if (signo == SIGINT) {
@@ -28,29 +32,12 @@ void sig_handler(int signo)
 	}
 }
 
-int main(int argc, char *argv[])
+void *computer()
 {
-	key_t key;
-	int msgid;
-	int id = 65;
-		
-	//signal(SIGINT, sig_handler);
-	
-	if (argc > 3 || argc < 2) {
-		printf("usage is \"compute <thread pool size> <-n for just read and output"
-           "calculations>\"\n");
-		exit(1);
-	}
-
-	key = ftok("./bmconquest", id);
-	printf("key -> %d\n",key);
-
-  int threadLimit = atoi(argv[1]); printf("%d\n", threadLimit);
-	int limit = 0;
-	while(1) {
-		msgid = msgget(key, 0666 | IPC_CREAT);
 		msg a;
+		pthread_mutex_lock(&readLock);
 		msgrcv(msgid, &a, sizeof(a), 1, 0);
+		pthread_mutex_unlock(&readLock);
 		printf("type %ld jobid %d rowvec %d colvec %d innerDim %d\n",
 				a.type, a.jobid, a.rowvec, a.colvec, a.innerDim);
 		
@@ -73,20 +60,50 @@ int main(int argc, char *argv[])
     if (DEBUG) printf("R: %d * C: %d = %d ", a.rowvec, a.colvec, p);
 		free(row);
 		free(col);
-    msg *write = malloc(sizeof(msg));
-    write->type = 2;
-    write->jobid = sent++;
-    write->rowvec = a.rowvec;
-    write->colvec = a.colvec;
-    write->innerDim = p;
+		pthread_mutex_lock(&writeLock);
+    msg *writeFile = malloc(sizeof(msg));
+    writeFile->type = 2;
+    writeFile->jobid = a.jobid;
+    writeFile->rowvec = a.rowvec;
+    writeFile->colvec = a.colvec;
+    writeFile->innerDim = p;
     int size = (4 * sizeof(int));
-    int rc = msgsnd(msgid, write, size, 0);
+    int rc = msgsnd(msgid, writeFile, size, 0);
+		pthread_mutex_unlock(&writeLock);
     printf("\nSending job %4d type %ld size %d (rc=%d)\n",
-        write->jobid, write->type, size, rc);
-    free(write);
-		limit += 1;
+        writeFile->jobid, writeFile->type, size, rc);
+    free(writeFile);
+		pthread_exit(0);
+}
+
+int main(int argc, char *argv[])
+{
+	key_t key;
+		
+	signal(SIGINT, sig_handler);
+	pthread_mutex_init(&readLock, NULL);
+	pthread_mutex_init(&writeLock, NULL);
+	pthread_mutex_init(&srLock, NULL);
+	
+	if (argc > 3 || argc < 2) {
+		printf("usage is \"compute <thread pool size> <-n for just read and output"
+           "calculations>\"\n");
+		exit(1);
 	}
-	printf("SAh");
-	msgctl(msgid, IPC_RMID, NULL);
+
+	key = ftok("./bmconquest", 65);
+	printf("key -> %d\n",key);
+
+  int threadLimit = atoi(argv[1]); printf("%d\n", threadLimit);
+	pthread_t threads[threadLimit];
+	msgid = msgget(key, 0666 | IPC_CREAT);
+	int counter = 0;
+	while(1) {
+		pthread_create(&threads[counter++], NULL, computer, 0);
+		if (counter >= threadLimit) break;
+	}
+	for (int i = 0; i < counter;i++) {
+		pthread_join(threads[i], NULL);
+	}
 	return 0;
 }

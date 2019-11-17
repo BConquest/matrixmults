@@ -128,6 +128,10 @@ void printMatrix(matrixStruct *print)
 void writeToFile(char *filename, int **matrix, int rows, int cols)
 {
   FILE *out = fopen(filename, "w");
+  if (!out) {
+    perror("Error In File Output");
+    exit(1);
+  }
   fprintf(out, "%d %d\n", rows, cols);
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < cols; j++) {

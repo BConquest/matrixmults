@@ -19,6 +19,7 @@ int recvJobs = 0;
 
 pthread_mutex_t srLock;
 pthread_mutex_t wLock;
+pthread_mutex_t readLock;
 pthread_mutex_t outLock;
 
 typedef struct QueueMessage{
@@ -89,7 +90,10 @@ void *package(void *args)
   printf("Sending job id %4d type %ld size %d (rc=%d)\n",
          write->jobid, write->type, size, rc);
 
+  pthread_mutex_lock(&readLock);
   rc = msgrcv(msgid, &read, sizeof(msg), 2, 0);
+  
+
   if (rc < 0) {
     perror("Error in message recieve");
     exit(1);
@@ -99,12 +103,16 @@ void *package(void *args)
   recvJobs++;
   pthread_mutex_unlock(&srLock);
 
+  size = (4 * sizeof(int));
   printf("Receiving Job id %d type %ld size %ld\n"
-         , read.jobid, read.type, sizeof(read));
-
+         , read.jobid, read.type, size);
+ // if (DEBUG) {
+    printf("\n\t\t\t\t\t\t%d\n", read.innerDim);
+ // }
   pthread_mutex_lock(&outLock);
-  tempArgs->out[write->rowvec][write->colvec] = read.innerDim;
+  tempArgs->out[read.rowvec][read.colvec] = read.innerDim;
   pthread_mutex_unlock(&outLock);
+  pthread_mutex_unlock(&readLock);
 
   free(write);
   free(row);
@@ -124,6 +132,10 @@ int main(int argc, char **argv)
   pthread_t *threads;
 
   signal(SIGINT, sig_handler);
+  pthread_mutex_init(&srLock, NULL);
+  pthread_mutex_init(&wLock,NULL);
+  pthread_mutex_init(&readLock, NULL);
+  pthread_mutex_init(&outLock, NULL);
 
   if (argc != 5) {
     printf("Usage is: ./package <file1> <file2> <output file> <secs to sleep"
@@ -188,7 +200,7 @@ int main(int argc, char **argv)
   
   for (i = 0; i < a->rows; i++) {
     for (j = 0; j < b->cols; j++) {
-      printf("%d ", outputMatrix[i][j]);
+      printf("{%d,%d}%d ", i, j, outputMatrix[i][j]);
     }
     printf("\n");
   }
