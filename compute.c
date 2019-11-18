@@ -39,7 +39,6 @@ void *computer(void *print)
     msg a;
     pthread_mutex_lock(&readLock);
     int rc = msgrcv(msgid, &a, sizeof(a), 1, 0);
-    int jobId = a.jobid;
     recv ++;
     pthread_mutex_unlock(&readLock);
     int size = (4 * sizeof(int)) + (a.innerDim*sizeof(int)*2);
@@ -70,7 +69,7 @@ void *computer(void *print)
       pthread_mutex_lock(&writeLock);
       msg *writeFile = malloc(sizeof(msg));
       writeFile->type = 2;
-      writeFile->jobid = jobId;
+      writeFile->jobid = a.jobid;
       writeFile->rowvec = a.rowvec;
       writeFile->colvec = a.colvec;
       writeFile->innerDim = p;

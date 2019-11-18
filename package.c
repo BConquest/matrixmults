@@ -106,9 +106,6 @@ void *package(void *args)
   size = (4 * sizeof(int));
   printf("Receiving Job id %d type %ld size %d\n"
          , read.jobid, read.type, size);
- // if (DEBUG) {
-    printf("\n\t\t\t\t\t\t%d\n", read.innerDim);
- // }
   pthread_mutex_lock(&outLock);
   tempArgs->out[read.rowvec][read.colvec] = read.innerDim;
   pthread_mutex_unlock(&outLock);
@@ -188,8 +185,8 @@ int main(int argc, char **argv)
       pthread_create(&(threads[thread++]),NULL,package,(void *)args);
     }
   }
- 
-  for (i = 0; i < thread; i++) {
+  
+  for (i = 0; i < a->rows*b->cols; i++) {
     pthread_join(threads[i], NULL);
   }
   
