@@ -1,0 +1,59 @@
+Matrix A: 3 X 4
+1 2 3 4 
+5 6 7 8 
+9 10 11 12 
+Matrix B: 4 X 5
+1 2 3 4 5 
+6 7 8 9 10 
+11 12 13 14 15 
+16 17 18 19 20 
+(1x1)	(2x6)	(3x11)	(4x16)	
+Sending job id    0 type 1 size 48 (rc=0)
+(1x2)	Receiving Job id 0 type 2 size 16
+(2x7)	(3x12)	(4x17)	
+Sending job id    1 type 1 size 48 (rc=0)
+Receiving Job id 1 type 2 size 16
+(1x3)	(2x8)	(3x13)	(4x18)	
+Sending job id    2 type 1 size 48 (rc=0)
+(1x4)	(2x9)	(3x14)	(4x19)	
+Sending job id    3 type 1 size 48 (rc=0)
+(5x1)	(6x6)	(7x11)	(8x16)	
+Receiving Job id 3 type 2 size 16
+Sending job id    5 type 1 size 48 (rc=0)
+Receiving Job id 2 type 2 size 16
+(1x5)	(2x10)	(3x15)	(4x20)	
+Sending job id    4 type 1 size 48 (rc=0)
+Receiving Job id 4 type 2 size 16
+Receiving Job id 5 type 2 size 16
+(5x2)	(6x7)	(7x12)	(8x17)	
+Sending job id    6 type 1 size 48 (rc=0)
+Receiving Job id 6 type 2 size 16
+(5x4)	(6x9)	(7x14)	(8x19)	
+Sending job id    8 type 1 size 48 (rc=0)
+Receiving Job id 8 type 2 size 16
+(5x3)	(6x8)	(7x13)	(8x18)	
+Sending job id    7 type 1 size 48 (rc=0)
+Receiving Job id 7 type 2 size 16
+(5x5)	(6x10)	(7x15)	(8x20)	
+Sending job id    9 type 1 size 48 (rc=0)
+(9x1)	(10x6)	(11x11)	(12x16)	
+Sending job id   10 type 1 size 48 (rc=0)
+Receiving Job id 9 type 2 size 16
+Receiving Job id 10 type 2 size 16
+(9x3)	(10x8)	(11x13)	(12x18)	
+Sending job id   12 type 1 size 48 (rc=0)
+Receiving Job id 12 type 2 size 16
+(9x4)	(10x9)	(11x14)	(12x19)	
+Sending job id   13 type 1 size 48 (rc=0)
+Receiving Job id 13 type 2 size 16
+(9x5)	(10x10)	(11x15)	(12x20)	
+Sending job id   14 type 1 size 48 (rc=0)
+Receiving Job id 14 type 2 size 16
+(9x2)	(10x7)	(11x12)	(12x17)	
+Sending job id   11 type 1 size 48 (rc=0)
+Receiving Job id 11 type 2 size 16
+Total jobs sent:     15
+Total jobs recieved: 15
+{0,0}110 {0,1}120 {0,2}130 {0,3}140 {0,4}150 
+{1,0}246 {1,1}272 {1,2}298 {1,3}324 {1,4}350 
+{2,0}382 {2,1}424 {2,2}466 {2,3}508 {2,4}550 

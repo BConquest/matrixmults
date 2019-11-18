@@ -62,7 +62,7 @@ void *computer(void *print)
     }
 
     int p = dotProduct(row, col, a.innerDim);
-    if (DEBUG) printf("R: %d * C: %d = %d ", a.rowvec, a.colvec, p);
+    if (DEBUG || *printMsg == 1) printf("R: %d * C: %d = %d\n", a.rowvec, a.colvec, p);
     free(row);
     free(col);
     if (*printMsg == 0) {
